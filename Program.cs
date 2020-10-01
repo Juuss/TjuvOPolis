@@ -96,19 +96,24 @@ namespace TjuvOchPolis3
                                     if (person.PositionX == p.PositionX && person.PositionY == p.PositionY)
                                     {
                                         Console.Write($"Tjuv #{p.Number} har stulit från medborgare #{person.Number}. ");
-                                        int t = rnd.Next(0, (person.NumberOfItemsInTheBeginning - person.NumberOfMissingGoods));
-                                        foreach (var i in person.Inventory)
+                                        int t = taken(rnd, person.Inventory.Count());
+
+                                        foreach (var i in person.Inventory.ToList())
                                         {
                                             if (i.ItemNumber == t)
                                             {
-                                                Console.Write($"Hen tog: {i.Item1} ");
+                                                Console.Write($"Hen tog: {i.Item1}");
+                                                p.Inventory[p.NumberOfStolenGoods] = person.Inventory[t];
+                                                person.Inventory.RemoveAt(t);
                                             }
                                         }
+                                        if (person.Inventory.Count == 0)
+                                    {
+                                        Console.Write(" Hen har inget kvar");
+                                    }
                                         Console.WriteLine();
-                                        p.Inventory[p.NumberOfStolenGoods] = person.Inventory[t];
                                         p.NumberOfStolenGoods++;
                                         person.NumberOfMissingGoods++;
-                                        person.Inventory.RemoveAt(t);
                                         numberOfRobbedCitizens++;
                                         sec++;
                                         Thread.Sleep(1000);
@@ -252,19 +257,19 @@ namespace TjuvOchPolis3
             return t;
         }
         //När tjuv tar random sak ur inventory?
-        public static int taken(Random rnd)
+        public static int taken(Random rnd, int Number)
         {
-            int t = rnd.Next(4);
+            int t = rnd.Next(Number);
             return t;
         }
         //Citizens inventory
         public static List<Items> Belongings()
         {
             List<Items> belongings = new List<Items>();
-            belongings.Add(new Items("Nycklar", 1));
-            belongings.Add(new Items("Mobil", 2));
-            belongings.Add(new Items("Pengar", 3));
-            belongings.Add(new Items("Klocka", 4));
+            belongings.Add(new Items("Nycklar", 0));
+            belongings.Add(new Items("Mobil", 1));
+            belongings.Add(new Items("Pengar", 2));
+            belongings.Add(new Items("Klocka", 3));
             return belongings;
         }
         //Polisens inventory
